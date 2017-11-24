@@ -1,0 +1,47 @@
+#include <iostream>
+using namespace std;
+
+void maxSubArray( int a[], const int size );
+void output( int a[], const int size );
+
+void main()
+{
+    const int size = 11;
+    int a[ size ] = { -6, 2, 4, -7, 5, 3, 2, -1, 6, -9, -2 };
+    maxSubArray( a, size );
+    
+    system( "pause" );
+}
+
+void maxSubArray( int a[], const int size )
+{
+    output( a, size );
+    int max = a[ 0 ];
+    int temp = a[ 0 ];
+    int i;
+    for( i = 0; a[ i ] <= 0 && i < size; i++ )//此循环用来处理数组一开始有好多个0的情况
+    {
+        max = ( max <= a[ i ] )? a[ i ]: max;
+    }
+    for( ; i < size; i++ )
+    {
+        if( a[ i ] >= 0 )
+        {
+            max += a[ i ];
+            temp = a[ i + 1 ];
+        }
+        else
+        {
+            if( ( temp += a[ i ] ) >= 0 )
+                max += temp;            
+        }
+    }
+    cout << "最大子列和为: " << max << endl;
+}
+
+void output( int a[], const int size )
+{
+    cout << "数组为: " << endl;
+    for( int i = 0; i < size; i++ )
+        cout << a[ i ] << "  ";
+    cout << endl;
