@@ -1,0 +1,28 @@
+#include <iostream>
+using namespace std;
+
+void perm( const int k, const int n, int a[] );
+
+void main()
+{
+	int a[ 5 ] = { 1, 2, 3, 4, 5 };
+	perm( 0, 5, a );
+	system( "pause" );
+}
+
+void perm( const int k, const int n, int a[] )
+{
+	static int temp = a[ 0 ];
+	if( k == n )
+	{
+		for( int i = 0; i < n; i++ )
+			cout << a[ i ] << " ";
+		cout << endl;
+	}
+	for( int i = k; i < n; i++ )
+	{
+		temp = a[ i ]; a[ i ] = a[ k ]; a[ k ] = temp;
+		perm( k + 1, n, a );
+		temp = a[ k ]; a[ k ] = a[ i ]; a[ i ] = temp;
+	}
+}
