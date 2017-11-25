@@ -1,0 +1,106 @@
+#include <iostream>
+using namespace std;
+
+typedef int T;
+typedef struct Node *ptrToNode;
+struct Node
+{
+	T data;
+	ptrToNode Next;
+};
+typedef ptrToNode list;
+
+list read();
+void print( list& L );
+
+list merge( const list& L1, const list &L2 );
+
+void main()
+{
+	list L1, L2, L;
+	cout << "L1" << endl; L1 = read();
+	cout << "L2" << endl; L2 = read();
+	L = merge( L1, L2 );
+	cout << "L1" << endl; print( L1 );
+	cout << "L2" << endl; print( L2 );
+	cout << "L" << endl; print( L );
+	system( "pause" );
+}
+
+list merge( const list& L1, const list& L2 )
+{
+/*	list L;
+	L->Next = NULL;*/ //第一次报错，未将对象引用设置到对象的实例。原因：一个NULL的对象调用了方法（属性或其他成员）变成NULL.xxx引发的
+
+	list L = new Node;//正确操作
+    L->Next = NULL;
+	Node *ptr1 = L1->Next;
+	Node *ptr2 = L2->Next;
+	Node *ptr = L;
+	while( ptr1 != NULL && ptr2 != NULL )
+	{
+		Node *newNode = new Node;
+		newNode->Next = NULL;
+		if( ptr1->data <= ptr2->data )
+		{
+			newNode->data = ptr1->data;
+			ptr1 = ptr1->Next;
+		}
+		else
+		{
+			newNode->data = ptr2->data;
+			ptr2 = ptr2->Next;
+		}
+		ptr->Next = newNode;
+		ptr = ptr->Next;
+	}
+	while( ptr1 != NULL )
+	{
+		Node *newNode = new Node;
+		newNode->Next = NULL;
+		newNode->data = ptr1->data;
+		ptr1 = ptr1->Next;
+		ptr->Next = newNode;
+	    ptr = ptr->Next;
+	}
+	while( ptr2 != NULL )
+	{
+		Node *newNode = new Node;
+		newNode->Next = NULL;
+		newNode->data = ptr2->data;
+		ptr2 = ptr2->Next;
+		ptr->Next = newNode;
+		ptr = ptr->Next;
+	}
+	return L;
+}
+
+list read()
+{
+	int x;
+	list l = new Node;
+	l->data = 0;
+	l->Next = NULL;
+	Node *ptr = l;
+	for( int i = 0; i < 5; i++ )
+	{
+		cin >> x;
+		Node *newNode = new Node;
+		newNode->data = x;
+		ptr->Next = newNode;
+		newNode->Next = NULL;
+		ptr = ptr->Next;
+	}
+	return l;
+}
+
+void print( list& L )
+{
+	Node *ptr = L->Next;
+	while( ptr != NULL )
+	{
+		cout << ptr->data << " ";
+		ptr = ptr->Next;
+	}
+	cout << endl;
+}
