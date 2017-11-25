@@ -1,0 +1,26 @@
+#include <iostream>
+using namespace std;
+
+double fn( float x, int n );
+
+void main()
+{
+	int result = fn( 0.5, 2 );
+	cout << result << endl;
+	system( "pause" );
+}
+
+
+double fn( float x, int n )
+{
+	static int c = 0;
+	if( c == 0 )
+	{
+		++c; 
+		return x * fn( x, n - 1 );
+	}
+	if( n == 0 )
+		return 1.00;
+	else
+		return ( 1.00 - x * fn( x, n - 1 ) );
+}
