@@ -1,0 +1,46 @@
+#include <iostream>
+using namespace std;
+
+void move( int a[], const int m, const int n );
+void output( const int a[], const int n );
+
+int main()
+{
+	const int n = 10;
+	const int m = 4;
+	int a[ n ] = { 0, 1, 2, 3 ,4, 5, 6, 7, 8, 9 };
+	output( a, n );
+	move( a, m, n );
+	output( a, n );
+	system( "pause" );
+}
+
+void move( int a[], const int m, const int n )
+{
+	int temp;
+	for( int i = 0; i < ( n + 1 )/ 2; i++ )
+	{
+		temp = a[ i ];
+		a[ i ] = a[ n - i - 1 ];
+		a[ n - i - 1 ] = temp;
+	}                           
+	for( int i = 0; i < ( n - m + 1 )/ 2; i++ )
+	{
+		temp = a[ i ];
+		a[ i ] = a[ n - m - i - 1 ];
+		a[ n - m - i - 1 ] = temp;
+	}                        
+	for( int i = 0; i < ( m + 1 ) / 2; i++ )
+	{
+		temp = a[ i + n - m ];
+		a[ i + n - m ] = a[ n - i - 1 ];
+		a[ n - i - 1 ] = temp;
+	}
+}
+
+void output( const int a[], const int n )
+{
+	for( int i = 0; i < n; i++ )
+		cout << a[ i ] << " ";
+	cout << endl;
+}
