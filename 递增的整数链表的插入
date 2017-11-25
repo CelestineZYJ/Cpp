@@ -1,0 +1,92 @@
+#include <iostream>
+using namespace std;
+
+typedef int T;
+typedef struct Node *ptrToNode;
+struct Node
+{
+	T data;
+	ptrToNode Next;
+};
+typedef ptrToNode List;
+
+List Read();
+void print( List L );
+
+List Insert( List &L, T x );
+
+void main()
+{
+	List L;
+	T x;
+	cin >> x;
+	L = Read();
+	L = Insert( L, x );
+	print( L );
+
+	system( "pause" );
+}
+
+List Read()
+{
+	int x;
+	List l = new Node;
+	l->data = 0;
+	l->Next = NULL;
+	Node *ptr = l;
+	for( int i = 0; i < 5; i++ )
+	{
+		cin >> x;
+		Node *newNode = new Node;
+		newNode->data = x;
+		ptr->Next = newNode;
+		newNode->Next = NULL;
+		ptr = ptr->Next;
+	}
+	return l;
+}
+
+List Insert( List &L, T x )
+{
+	Node *newNode = new Node;
+	newNode->data = x;
+	Node *ptr = L->Next;
+	if( x <= ptr->data )
+	{
+		newNode->Next = ptr;
+		L->Next = newNode;
+		return L;
+	}
+	while( ptr->Next != NULL )
+	{
+		if( x >= ptr->data && x <= ptr->Next->data )
+		{
+			newNode->Next = ptr->Next;
+			ptr->Next = newNode;
+			return L;
+		}
+		ptr = ptr->Next;
+	}
+	if( x >= ptr->data )
+	{
+		newNode->Next = NULL;
+		ptr->Next = newNode;
+		return L;
+	}
+	else
+	{
+		cout << "插入失败" << endl;
+		return L;
+	}
+}
+
+void print( List L )
+{
+	Node *ptr = L->Next;
+	while( ptr != NULL )
+	{
+		cout << ptr->data << " ";
+		ptr = ptr->Next;
+	}
+	cout << endl;
+}
