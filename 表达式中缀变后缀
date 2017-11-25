@@ -1,0 +1,116 @@
+#ifndef STACK_H
+#define STACK_H
+#include <iostream>
+using namespace std;
+
+class Stack
+{
+public:
+	Stack( int sz = 20 );
+	~Stack(){ delete []elements;}
+	void transition();
+private:
+	void Push( const int& x );
+	char Pop();
+	char getTop() const;
+	int icp( const char& op ) const;
+    int isp( const char& op ) const;
+	char *elements;
+	int top;
+};
+
+void Stack::transition()
+{
+	char expression[ 20 ] = { '2', '+', '3', '*', '(', '7', '-', '4', ')', '+', '8', '/', '4', '=' };
+	Push( '=' );
+	for( int i = 0; expression[ i ] != '='; i++ )
+	{
+		if( isdigit( expression[ i ] ) )
+		{
+			cout << expression[ i ];
+			continue;
+		}     
+		if( icp( expression[ i ] ) < isp( getTop() ) && top != 0 )
+			while( top != 0 )
+			{
+				char temp = Pop();
+				if( temp == '(' || temp == ')' )
+					continue;
+				else
+					cout << temp;
+			}
+		if( icp( expression[ i ] ) > isp( getTop() ) || top == 0 )
+			Push( expression[ i ] );
+	}
+	cout << endl;
+} 
+
+Stack::Stack( int sz ): top( -1 )
+{
+	elements = new char[ sz ];
+};
+
+void Stack::Push( const int& x )
+{
+	elements[ ++top ] = x;
+};
+
+char Stack::Pop()
+{
+	return elements[ top-- ];
+};
+
+char Stack::getTop() const
+{               
+	return elements[ top ]; 
+}
+
+int Stack::icp( const char& op ) const
+{
+	switch( op ){
+	case'=':
+		return 0;
+	case'(':
+		return 8;
+	case'+':
+	case'-':
+		return 2;
+	case')':
+		return 1;
+	case'*':
+	case'/':
+		return 4;
+	}
+};
+
+int Stack::isp( const char& op ) const
+{
+	switch( op ){
+	case'=':
+		return 0;
+	case'(':
+		return 1;
+	case'+':
+	case'-':
+		return 3;
+	case')':
+		return 8;
+	case'*':
+	case'/':
+		return 5;
+	}
+};
+
+#endif
+
+//main
+#include "Stack.h"
+#include <iostream>
+using namespace std;
+
+void main()
+{
+	Stack s;
+	s.transition();
+	system( "pause" );
+}
