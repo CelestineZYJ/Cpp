@@ -1,0 +1,173 @@
+//"BinTree.h"
+#ifndef BINTREE_H
+#define BINTREE_H
+#include <iostream>
+#include <assert.h>
+using namespace std;
+
+template< class T >
+struct LinkNode //链式队列的结点定义
+{
+    T data;
+	LinkNode< T > *link;
+	
+	LinkNode( LinkNode< T > *ptr = NULL ){ link = ptr; };
+	LinkNode( const T &item, LinkNode< T > *ptr = NULL ){ data = item; link = ptr; };
+};
+
+template< class T >
+class Queue
+{
+public:
+	Queue(): rear( NULL ), front( NULL ){};
+	~Queue(){ makeEmpty();};
+	bool EnQueue( const T& x );
+	T DeQueue();
+	void makeEmpty();
+	bool isEmpty() const{ return ( front == NULL )? true: false;};
+	int getSize() const;
+protected:
+	LinkNode< T > *front, *rear;
+};
+
+template< class T >
+void Queue< T >::makeEmpty(){
+	LinkNode< T > *p;
+	while( front != NULL ){
+		p = front; front = front->link; delete p;}
+};
+
+template< class T >
+bool Queue< T >::EnQueue( const T& x ){
+	if( front == NULL ){
+		front = rear = new LinkNode< T >( x );
+		if( front == NULL ) return false;}
+	else{
+		rear->link = new LinkNode< T >( x );      
+		if( rear->link == NULL ) return false;
+		rear = rear->link;
+	}
+	return true;
+};
+
+template< class T >
+T Queue< T >::DeQueue()
+{
+	T x = front->data;
+	if( isEmpty() == true ) return false;
+	LinkNode< T > *p = front;
+	front = front->link; delete p;
+	return x;
+};
+
+template< class T >
+int Queue< T >::getSize() const{
+	LinkNode< T > *p = front; int k = 0;
+	while( p != NULL ){ p = p->link; k++; }
+	return k;
+};
+
+typedef int T;
+struct TNode
+{
+	T Data;
+	TNode *Left;
+	TNode *Right;
+	int flag;
+	TNode( T x = -1, TNode *l = NULL, TNode *r = NULL, int f = 1 ): Data( x ), Left( l ), Right( r ), flag( 1 ){};
+};
+
+class BinTree
+{
+public:
+	BinTree(): root( NULL ){};
+	BinTree( T value ): RefValue( value ), root( NULL ){};
+	~BinTree(){ Destroy( root ); };
+	void CreateBinTree( TNode *&subTree ); //根据输入建立二叉树
+	bool isEmpty(){ return ( root == NULL )? true: false; };
+	void Destroy( TNode *subTree );
+	void PreOrder1( TNode *subTree ) const; //递归前序遍历
+	void InOrder1( TNode *subTree ) const; //递归中序遍历
+	void LevelOrder( TNode *subTree ) const; //队列层次遍历
+	TNode *root;
+	T RefValue;
+};
+
+void BinTree::LevelOrder( TNode *subTree ) const
+{
+	Queue< TNode* > Q;
+	TNode *t;
+	if( !subTree ) return; //若是空树则直接返回
+	Q.EnQueue( subTree );
+	while( !Q.isEmpty() )
+	{
+		t = Q.DeQueue();
+		cout << t->Data << " ";
+		if( t->Left ) Q.EnQueue( t->Left );
+		if( t->Right ) Q.EnQueue( t->Right );
+	}
+};
+
+//递归遍历
+void BinTree::PreOrder1( TNode *subTree ) const
+{
+	if( subTree != NULL )
+	{
+		cout << subTree->Data << " ";
+		PreOrder1( subTree->Left );
+		PreOrder1( subTree->Right );
+	}
+};
+
+void BinTree::InOrder1( TNode *subTree ) const
+{
+	if( subTree != NULL )
+	{
+		InOrder1( subTree->Left );
+		cout << subTree->Data << " ";
+		InOrder1( subTree->Right );
+	}
+};
+
+void BinTree::CreateBinTree( TNode *&subTree ) //前序遍历建立二叉树
+{
+	T item;
+	cin >> item;
+	if( item != RefValue )
+	{
+		subTree = new TNode( item ); 
+		CreateBinTree( subTree->Left );
+		CreateBinTree( subTree->Right );
+	}
+	else
+		subTree = NULL;
+};
+
+void BinTree::Destroy( TNode *subTree )
+{
+	if( subTree != NULL )
+	{
+		Destroy( subTree->Left );
+		Destroy( subTree->Right );
+		delete subTree;
+	}
+};
+
+#endif
+
+//"main.cpp"
+#include "BInTree.h"
+#include <iostream>
+using namespace std;
+
+void main()
+{
+	BinTree BT( 0 );
+	cout << "输入数据建立二叉树( 0为NULL )." << endl;
+	
+	BT.CreateBinTree( BT.root );
+	cout << "前序遍历输出(递归): "; BT.PreOrder1( BT.root );
+	cout << "\n中序遍历输出(递归): "; BT.InOrder1( BT.root );
+	cout << "\n层次遍历输出(队列): "; BT.LevelOrder( BT.root );
+	system( "pause" );
+}
