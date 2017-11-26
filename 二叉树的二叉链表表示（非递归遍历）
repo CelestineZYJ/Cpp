@@ -1,0 +1,156 @@
+//"BinTree.h"
+#ifndef BINTREE_H
+#define BINTREE_H
+#include <iostream>
+#include <assert.h>
+using namespace std;
+
+const int stackIncreament = 20;
+template< class T >
+class Stack
+{
+public:
+	Stack( int sz = 50 );
+	~Stack(){ delete []elements;}
+	void Push( const T& x );
+	bool Pop( T& x );
+	bool getTop( T& x ) const;
+	bool IsEmpty() const{ return ( top == -1 )? true: false;}
+	bool isFull() const{ return ( top == maxSize - 1 )? true: false;}
+private:
+	T *elements;
+	int top;
+	int maxSize;
+};
+
+template< class T >
+Stack< T >::Stack( int sz ): top( -1 ), maxSize( sz ){
+	elements = new T[ maxSize ];
+	assert( elements != NULL );
+};
+
+template< class T >
+void Stack< T >::Push( const T& x ){
+	elements[ ++top ] = x;
+};
+
+template< class T >
+bool Stack< T >::Pop( T& x ){
+	if( IsEmpty() == true ) return false;
+	x = elements[ top-- ];
+	return true;
+};
+
+template< class T >
+bool Stack< T >::getTop( T& x ) const{
+	if( IsEmpty() == true ) return false;
+	x = elements[ top ];
+	return true;
+};
+
+typedef int T;
+struct TNode
+{
+	T Data;
+	TNode *Left;
+	TNode *Right;
+	int flag;
+	TNode( T x = -1, TNode *l = NULL, TNode *r = NULL, int f = 1 ): Data( x ), Left( l ), Right( r ), flag( 1 ){};
+};
+
+class BinTree
+{
+public:
+	BinTree(): root( NULL ){};
+	BinTree( T value ): RefValue( value ), root( NULL ){};
+	~BinTree(){ Destroy( root ); };
+	void CreateBinTree( TNode *&subTree, int i ); //根据一般二叉树数组建立二叉树
+	bool isEmpty(){ return ( root == NULL )? true: false; };
+	void Destroy( TNode *subTree );
+	void PostOrder1( TNode *subTree ) const; //递归后序遍历
+	void PreOrder2( TNode *subTree ) const; //非递归前序遍历
+	void InOrder2( TNode *subTree ) const; //非递归中序遍历
+	TNode *root;
+	T RefValue;
+};
+
+//非递归遍历
+void BinTree::InOrder2( TNode *subTree ) const
+{
+	TNode *t = subTree;
+	Stack< TNode* > s;
+	while( t || !s.IsEmpty() )
+	{
+		while( t )
+		{
+			s.Push( t );
+			t = t->Left;
+		}
+		if( !s.IsEmpty() )
+		{
+			s.Pop( t );
+			cout << t->Data << " ";
+			t = t->Right;
+		}
+	}
+};
+
+void BinTree::PreOrder2( TNode *subTree ) const
+{
+	TNode *t = subTree;
+	Stack< TNode* > s;
+	while( t || !s.IsEmpty() )
+	{
+		while( t )
+		{
+			cout << t->Data << " ";
+			s.Push( t );
+			t = t->Left;
+		}
+		if( !s.IsEmpty() )
+		{
+			s.Pop( t );
+			t = t->Right;
+		}
+	}
+};
+
+void BinTree::CreateBinTree( TNode *&subTree, int i )
+{
+	static T a[ 21 ] = { RefValue, 1, 2, 3, RefValue, 5 ,6, 7, RefValue, RefValue, 10, 11, RefValue, RefValue, RefValue, 15, RefValue, RefValue, RefValue, RefValue, 20 };
+	if( a[ i ] != RefValue )
+	{
+		subTree = new TNode( a[ i ] );
+		CreateBinTree( subTree->Left, 2 * i );
+        CreateBinTree( subTree->Right, 2 * i + 1 );
+	}
+	else
+		subTree = NULL;
+};
+
+void BinTree::Destroy( TNode *subTree )
+{
+	if( subTree != NULL )
+	{
+		Destroy( subTree->Left );
+		Destroy( subTree->Right );
+		delete subTree;
+	}
+};
+
+#endif
+
+//"main.cpp"
+#include "BinTree.h"
+#include <iostream>
+using namespace std;
+
+void main()
+{
+	BinTree BT2( 0 );
+	BT2.CreateBinTree( BT2.root, 1 );
+	cout << "\n\n前序遍历输出(非递归): "; BT2.PreOrder2( BT2.root );
+	cout << "\n中序遍历输出(非递归): "; BT2.InOrder2( BT2.root );	
+	
+	system( "pause" );
+}
