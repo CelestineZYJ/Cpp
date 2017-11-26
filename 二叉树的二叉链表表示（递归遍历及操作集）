@@ -1,0 +1,190 @@
+//"BInTree.h"
+#ifndef BINTREE_H
+#define BINTREE_H
+#include <iostream>
+#include <assert.h>
+using namespace std;
+
+typedef int T;
+struct TNode
+{
+	T Data;
+	TNode *Left;
+	TNode *Right;
+	int flag;
+	TNode( T x = -1, TNode *l = NULL, TNode *r = NULL, int f = 1 ): Data( x ), Left( l ), Right( r ), flag( 1 ){};
+};
+
+class BinTree
+{
+public:
+	BinTree(): root( NULL ){};
+	BinTree( T value ): RefValue( value ), root( NULL ){};
+	~BinTree(){ Destroy( root ); };
+	void CreateBinTree( TNode *&subTree ); //根据输入建立二叉树
+	void CreateTreeArray( TNode *&subTree, T a[], int i = 1 ); //二叉链表转数组表示二叉树
+	bool isEmpty(){ return ( root == NULL )? true: false; };
+	void Destroy( TNode *subTree );
+	TNode *Find( TNode *subTree, const T& x ) const;
+	void ChangeChild( TNode *subTree ); //以叶结点为参数交换每个结点的左右子女
+	int Size( TNode *subTree ) const; //返回树结点数
+	int LeaveSize( TNode *subTree ) const; //返回叶结点数(度为0的结点数)
+	int Height( TNode *subTree ) const; //返回树高度
+	void PreOrder1( TNode *subTree ) const; //递归前序遍历
+	void InOrder1( TNode *subTree ) const; //递归中序遍历
+	void PostOrder1( TNode *subTree ) const; //递归后序遍历
+	TNode *root;
+	T RefValue;
+};
+
+TNode *BinTree::Find( TNode *subTree, const T& x ) const
+{
+	static TNode *result = NULL;
+	if( subTree != NULL ){
+	if( subTree->Data == x )
+	{
+		cout << "\n找到结点: " << subTree->Data << endl;
+		return ( result = subTree );
+	}}
+	if( subTree != NULL )
+	{
+		Find( subTree->Left, x );
+		if( result != NULL ){ cout << "祖先结点: " << subTree->Data << endl; return result; }
+		Find( subTree->Right, x );
+		if( result != NULL ){ cout << "祖先结点: " << subTree->Data << endl;  return result; }
+	}
+};
+
+//递归遍历
+void BinTree::PreOrder1( TNode *subTree ) const
+{
+	if( subTree != NULL )
+	{
+		cout << subTree->Data << " ";
+		PreOrder1( subTree->Left );
+		PreOrder1( subTree->Right );
+	}
+};
+
+void BinTree::InOrder1( TNode *subTree ) const
+{
+	if( subTree != NULL )
+	{
+		InOrder1( subTree->Left );
+		cout << subTree->Data << " ";
+		InOrder1( subTree->Right );
+	}
+};
+
+void BinTree::PostOrder1( TNode *subTree ) const
+{
+	if( subTree != NULL )
+	{
+		PostOrder1( subTree->Left );
+		PostOrder1( subTree->Right );
+		cout << subTree->Data << " ";
+	}
+};
+
+void BinTree::ChangeChild( TNode *subTree )
+{
+	if( subTree != NULL )
+	{
+		TNode *temp = subTree->Left; subTree->Left = subTree->Right; subTree->Right = temp;
+		ChangeChild( subTree->Left );
+		ChangeChild( subTree->Right );
+	}
+};
+
+int BinTree::Size( TNode *subTree ) const 
+{
+	if( subTree == NULL )
+		return 0;
+	else
+		return 1 + Size( subTree->Left ) + Size( subTree->Right );
+};
+
+int BinTree::LeaveSize( TNode *subTree )const
+{
+	if( subTree == NULL )
+		return 0;
+	if( subTree->Left == NULL && subTree->Right == NULL )
+		return 1;
+	else
+		return LeaveSize( subTree->Left ) + LeaveSize( subTree->Right );
+};
+
+int BinTree::Height( TNode *subTree ) const
+{
+	if( subTree == NULL )
+		return 0;
+	else
+	{
+		int i = Height( subTree->Left );
+		int j = Height( subTree->Right );
+		return ( i > j )? i + 1: j + 1;
+	}
+};
+
+void BinTree::CreateBinTree( TNode *&subTree ) //前序遍历建立二叉树
+{
+	T item;
+	cin >> item;
+	if( item != RefValue )
+	{
+		subTree = new TNode( item ); 
+		CreateBinTree( subTree->Left );
+		CreateBinTree( subTree->Right );
+	}
+	else
+		subTree = NULL;
+};
+
+void BinTree::CreateTreeArray( TNode *&subTree, T a[], int i )
+{
+	if( subTree != NULL )
+	{
+		a[ i ] = subTree->Data;
+		CreateTreeArray( subTree->Left, a, 2 * i );
+		CreateTreeArray( subTree->Right, a, 2 * i + 1 );
+	}
+	else
+		a[ i ] = RefValue;
+};
+
+void BinTree::Destroy( TNode *subTree )
+{
+	if( subTree != NULL )
+	{
+		Destroy( subTree->Left );
+		Destroy( subTree->Right );
+		delete subTree;
+	}
+};
+
+#endif
+
+//"main.cpp" 各种函数都可以用
+#include "BInTree.h"
+#include <iostream>
+using namespace std;
+
+void main()
+{
+	BinTree BT1( 0 );
+	cout << "输入数据建立二叉树( 0为NULL )." << endl;
+	
+	BT1.CreateBinTree( BT1.root );
+	cout << "前序遍历输出(递归): "; BT1.PreOrder1( BT1.root );
+	cout << "\n中序遍历输出(递归): "; BT1.InOrder1( BT1.root );
+	
+	cout << "\n根据二叉链表表示二叉树建立完全二叉树数组表示" << endl;
+	T a[ 50 ] = { BT1.RefValue };
+	BT1.CreateTreeArray( BT1.root, a, 1 );
+	for( int i = 0; i < 50; i++ )
+	{
+		if( a[ i ] != BT1.RefValue )
+			cout << "a[ " << i << " ]: " << a[ i ] << endl;
+	}
+	system( "pause" );
+}
