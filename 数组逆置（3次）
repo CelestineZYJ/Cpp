@@ -1,0 +1,43 @@
+/*[5]两个长度分别为m，n的向量A和B（元素是字符型）顺序存放在一个数组中，数组长度为
+	m+n。编写一个时间复杂度和空间复杂度分别为O(n)和O(1)的算法，将A与B的位置互换
+	*/
+#include <iostream>
+using namespace std;
+
+void reverse( int, int, char [] );
+void output( char B[] )
+{
+	for( int i = 0; i < 8; i++ )
+		cout << B[ i ] << "   ";
+}
+
+int main()
+{
+	char A[ 8 ] = { 'a', 'b', 'c', '1', '2', '3', '4', '5' };
+
+	reverse( 0, 7, A );
+	cout << "reverse 1:   ";
+	output( A );
+	reverse( 0, 4, A );
+	cout << "\n\nreverse 2:   ";
+	output( A );
+	reverse( 5, 7, A );
+	cout << "\n\nreverse 3:   ";
+	output( A );
+
+	system( "pause" );
+	return 0;
+}
+
+void reverse( int a, int b, char B[] )
+{
+	if( a == b || a == b + 1 )
+		return;
+	else
+	{
+		int temp = B[ a ];
+		B[ a ] = B[ b ];
+		B[ b ] = temp;
+		reverse( ++a, --b, B );
+	}
+}
