@@ -1,0 +1,47 @@
+/*[4]现有一其元素的值均为整数（可正可负）的数组，试编写时间和空间复杂度分别为O(n)
+和O(1)的算法，将所有负数放在正数的前面。
+*/
+#include <iostream>
+using namespace std;
+
+void Sort( int, int, int [] );
+
+int main()
+{
+	int A[ 10 ] = { -12, 2, -1, 0, 23, 35, -6, -5, 18, 20 };
+	
+	cout << "Unsorted array:   ";
+	for( int i = 0; i < 10; i++ )
+		cout << A[ i ] << "   ";
+
+	Sort( 0, 9, A );
+	
+	cout << "\n\nSorted array:   ";
+	for( int i = 0; i < 10; i++ )
+		cout << A[ i ] << "   ";
+
+	system("pause");
+	return 0;
+}
+
+void Sort( int start, int end, int B[] )
+{
+	if( start == end || start == end + 1 )
+		return;
+	else
+	{
+		if( B[ start ] < 0 && B[ end ] >= 0 )//切记要用前置++和前置--，否则会无限递归，以后为了防止出错，都这样用，比较保险
+			Sort( ++start, --end, B );
+		if( B[ start ] < 0 && B[ end ] < 0 )
+			Sort( ++start, end, B );
+		if( B[ start ] >= 0 && B[ end ] >= 0 )
+			Sort( start, --end, B );
+		if( B[ start ] >= 0 && B[ end ] < 0 )
+		{
+			int temp = B[ start ];
+			B[ start ] = B[ end ];
+			B[ end ] = temp;
+			Sort( ++start, --end, B );
+		}
+	}
+}
